@@ -47,6 +47,10 @@ class P2P {
     this.sPort = sPort;
   }
   
+  public void run() {
+    checkConnection();
+  }
+  
   public Server initServer(PApplet parent) {
     s = new Server(parent, sPort);
     return s;
@@ -58,10 +62,6 @@ class P2P {
     return c;
   }
   
-  //public void run() {
-  //  checkConnection();
-  //}
-  
   public boolean isConnected() {
     return connected;
   }
@@ -70,15 +70,17 @@ class P2P {
     
   }
   
-  private void checkConnection() {
+  public void checkConnection() {
     if(lastConnectionCheck < millis() - 2000) {
       println("Checking connection");
       lastConnectionCheck = millis();
       if(c.active() == false) {
         println("Reconnecting");
         initClient(cParent);
+        connected = false;
       } else {
         println("Connection Good");
+        connected = true;
       }
     }
     
@@ -92,33 +94,33 @@ class Canvas extends P2P {
   String input;
   int data[];
   
-  Server s;
-  Client c;
-  
- Canvas(PApplet parent, String cIP, int cPort, int sPort) {
+  Canvas(PApplet parent, String cIP, int cPort, int sPort) {
     super(cIP, cPort, sPort);
     super.initServer(parent);
     super.initClient(parent);
- }
+  }
  
- public void draw() {
-   
-   super.checkConnection();
-   
-   if (mousePressed == true) {
-    stroke(255);
-    line(pmouseX, pmouseY, mouseX, mouseY);
-    super.s.write(pmouseX + " " + pmouseY + " " + mouseX + " " + mouseY + "\n");
-   }
+  public void draw() {
+    super.run();
     
-   if (super.c.available() > 0) { 
-    input = super.c.readString();
-    input = input.substring(0, input.indexOf("\n"));
-    data = int(split(input, ' '));
-    stroke(0);
-    line(data[0], data[1], data[2], data[3]);
-   }
-   
- }
+    if(isConnected()) {
+      
+      if (mousePressed == true) {
+        stroke(255);
+        line(pmouseX, pmouseY, mouseX, mouseY);
+        s.write(pmouseX + " " + pmouseY + " " + mouseX + " " + mouseY + "\n");
+      }
+      
+      if (c.available() > 0) { 
+        input = c.readString();
+        input = input.substring(0, input.indexOf("\n"));
+        data = int(split(input, ' '));
+        stroke(0);
+        line(data[0], data[1], data[2], data[3]);
+      }
+      
+    }
+
+  }
   
 }
