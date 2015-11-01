@@ -31,7 +31,6 @@ class P2P {
   long lastConnectionCheck;
   long startPing;
   boolean connected;
-  JSONObject data;
 
   PApplet cParent;
 
@@ -42,7 +41,6 @@ class P2P {
     this.cIP = cIP;
     this.cPort = cPort;
     this.sPort = sPort;
-    this.data = new JSONObject();
   }
 
   public void run() {
@@ -105,8 +103,6 @@ class Canvas extends P2P implements java.io.Serializable {
         stroke(255);
         line(pmouseX, pmouseY, mouseX, mouseY);
         s.write(pmouseX + " " + pmouseY + " " + mouseX + " " + mouseY + "\n");
-        
-        
       }
 
       if (c.available() > 0) { 
