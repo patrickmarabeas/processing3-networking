@@ -26,9 +26,7 @@ void setup() {
   get = new GetRequest("http://127.0.0.1:3002/");
   get.send();
   response = parseJSONObject(get.getContent());
-  JSONObject header = parseJSONObject(get.getHeader("Content-Length"));
   println(response);
-  println(header);
   
   //ipList = new HTTPGET(this, "search.twitter.com", 80, "/search.atom?q=Nottingham");
   //ipList.request();
